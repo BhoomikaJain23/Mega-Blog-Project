@@ -1,5 +1,5 @@
 import conf from '../conf/conf.js';
-import { Client,Id,Databases,Storage,Query } from 'appwrite';
+import { Client,ID,Databases,Storage,Query } from 'appwrite';
 
 
 export class Service{
@@ -97,7 +97,7 @@ export class Service{
         try {
            return await this.bucket.createFile(
             conf.appwriteBucketId,
-            Id.unique(),
+            ID.unique(),
             file
            ) 
         } catch (error) {
