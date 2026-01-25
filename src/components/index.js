@@ -6,9 +6,10 @@ import LogoutBtn from './Header/LogoutBtn.jsx'
 import RTE from "./RTE.jsx"
 import Signup from "./Signup.jsx"
 import Login from "./Login.jsx"
-import Post from "./Post";
+
 import PostForm from "./post-form/PostForm.jsx"
 import PostCard from "./PostCard.jsx"
+import AuthLayout from "./AuthLayout.jsx"
 
 export{
     Header,
@@ -19,7 +20,6 @@ export{
     RTE,
     Signup,
     Login,
-    Post,
     PostForm,
     PostCard
 }
