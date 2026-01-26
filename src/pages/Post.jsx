@@ -4,7 +4,7 @@ import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
-//I found it! The issue is in other files still using featuredImage
+//I found it! The issue is in other files still using featuredImage.......................
 export default function Post() {
     const [post, setPost] = useState(null);
     const { slug } = useParams();
