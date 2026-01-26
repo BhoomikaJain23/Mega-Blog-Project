@@ -4,8 +4,7 @@ import { Client,ID,Databases,Storage,Query } from 'appwrite';
 
 export class Service{
     client=new Client();
-    Databases;
-    storage;
+    databases;
     bucket;
 
     constructor(){
@@ -56,7 +55,7 @@ export class Service{
 
        async deletePost(slug){
         try {
-            return await this.databases.deleteDocument(
+             await this.databases.deleteDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug
@@ -85,7 +84,7 @@ export class Service{
         return await this.databases.listDocuments(
             conf.appwriteDatabaseId,
             conf.appwriteCollectionId,
-            queries,
+            queries
         )
        } catch (error) {
         console.log("Appwrite service :: getPosts :: error",error);
@@ -108,7 +107,7 @@ export class Service{
  
        async deleteFile(fileId){
         try {
-            return await this.bucket.deleteFile(
+             await this.bucket.deleteFile(
                 conf.appwriteBucketId,
                 fileId
             )
@@ -124,14 +123,8 @@ export class Service{
             conf.appwriteBucketId,
             fileId
         )
+        
        } 
-
-       getFilePreview(fileId){
-        return this.bucket.getFilePreview(
-            conf.appwriteBucketId,
-            fileId
-        )
-       }
 
     }
 
@@ -139,4 +132,4 @@ export class Service{
 
 
 const service = new Service();
-export default Service;
+export default service;

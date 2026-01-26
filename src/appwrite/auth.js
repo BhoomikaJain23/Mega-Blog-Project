@@ -1,4 +1,4 @@
-import { use } from 'react';
+
 import conf from '../conf/conf.js';
 import { Client, Account,ID } from 'appwrite';
 
@@ -40,7 +40,12 @@ export class AuthService {
         try{
            return await this.account.get();
         }catch(error){
-            console.log("Appwrite serive::getCurrentUser :: error",error);
+            console.error(
+  "Appwrite service::getCurrentUser :: error",
+  error?.message,
+  error
+);
+
          
         }
         return null
