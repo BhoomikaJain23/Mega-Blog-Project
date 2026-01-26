@@ -31,12 +31,12 @@ export default function PostForm({ post }) {
             const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
             if (file) {
-                appwriteService.deleteFile(post.featuredImage);
+                appwriteService.deleteFile(post.featureImage);
             }
 
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
-                featuredImage: file ? file.$id : undefined,
+                featureImage: file ? file.$id : undefined,
             });
 
             if (dbPost) {
@@ -48,13 +48,13 @@ export default function PostForm({ post }) {
     return;
 }
 const file = await appwriteService.uploadFile(data.image[0]);
-
+//hehe
 
             if (file) {
                 const fileId = file.$id;
                 const dbPost = await appwriteService.createPost({ 
                     ...data, 
-                    featuredImage: fileId,
+                    featureImage: fileId,
                     userId: userData.$id 
                 });
 
@@ -117,7 +117,7 @@ const file = await appwriteService.uploadFile(data.image[0]);
                 {post && (
                     <div className="w-full mb-4">
                         <img
-                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            src={appwriteService.getFilePreview(post.featureImage)}
                             alt={post.title}
                             className="rounded-lg"
                         />
