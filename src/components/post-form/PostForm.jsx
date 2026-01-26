@@ -22,10 +22,11 @@ export default function PostForm({ post }) {
 
     const submit = async (data) => {
        
-    if (!userData) {
-        alert("Please login before creating a post.");
-        return;
-    }
+   if (!userData) {
+    alert("Please login before creating a post.");
+    return;
+}
+
         if (post) {
             const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
@@ -42,7 +43,12 @@ export default function PostForm({ post }) {
                 navigate(`/post/${dbPost.$id}`);
             }
         } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
+            if (!data.image || data.image.length === 0) {
+    alert("Please upload an image");
+    return;
+}
+const file = await appwriteService.uploadFile(data.image[0]);
+
 
             if (file) {
                 const fileId = file.$id;

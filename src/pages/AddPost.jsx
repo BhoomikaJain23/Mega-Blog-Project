@@ -1,15 +1,17 @@
 import React from "react";
-import {Container,PostForm} from "../components"
+import { Container, PostForm } from "../components";
+import { useSelector } from "react-redux";
 
+function AddPost() {
+    const userData = useSelector((state) => state.auth.userData);
 
-function AddPost(){
-    return(
+    return (
         <div className="py-8">
             <Container>
-                <PostForm/>
+                <PostForm />
             </Container>
         </div>
-    )
+    );
 }
 
 export default AddPost;
