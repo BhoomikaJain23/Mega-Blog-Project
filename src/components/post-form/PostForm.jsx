@@ -48,7 +48,7 @@ export default function PostForm({ post }) {
     return;
 }
 const file = await appwriteService.uploadFile(data.image[0]);
-
+//hehe
 
             if (file) {
                 const fileId = file.$id;
