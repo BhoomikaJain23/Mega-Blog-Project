@@ -19,69 +19,35 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-        try {
-            if (post) {
-                const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+        console.log("Form Data:", data);
 
-                if (file) {
-                    appwriteService.deleteFile(post.featuredimage);
-                }
+        if (post) {
+            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
-                const dbPost = await appwriteService.updatePost(post.$id, {
-                    ...data,
-                    featuredimage: file ? file.$id : post.featuredimage,
-                });
+            if (file) {
+                appwriteService.deleteFile(post.featuredimage);
+            }
+
+            const dbPost = await appwriteService.updatePost(post.$id, {
+                ...data,
+                featuredimage: file ? file.$id : undefined,
+            });
+
+            if (dbPost) {
+                navigate(`/post/${dbPost.$id}`);
+            }
+        } else {
+            const file = await appwriteService.uploadFile(data.image[0]);
+
+            if (file) {
+                const fileId = file.$id;
+                data.featuredimage = fileId;
+                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
 
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`);
                 }
-            } else {
-                if (!data.image[0]) {
-                    alert("Please select a featured image");
-                    return;
-                }
-
-                const file = await appwriteService.uploadFile(data.image[0]);
-                console.log("Uploaded file:", file);
-                console.log("File type:", typeof file, "File $id:", file?.$id);
-
-                if (file && file.$id) {
-                    console.log("About to create post with featuredImage:", file.$id);
-                    console.log("appwriteService exists?", !!appwriteService);
-                    console.log("appwriteService.createPost exists?", typeof appwriteService.createPost);
-                    
-                    console.log("Calling createPost...");
-                    let dbPost;
-                    try {
-                        dbPost = await appwriteService.createPost({
-                            title: data.title,
-                            slug: data.slug,
-                            content: data.content,
-                            status: data.status,
-                            featuredimage: file.$id,
-                            userId: userData.$id,
-                        });
-                    } catch (createErr) {
-                        console.error("createPost threw error:", createErr);
-                        throw createErr;
-                    }
-                    console.log("dbPost returned:", dbPost);
-                    console.log("dbPost type:", typeof dbPost);
-                    console.log("dbPost keys:", dbPost ? Object.keys(dbPost) : "null/undefined");
-
-                    if (dbPost && dbPost.$id) {
-                        navigate(`/post/${dbPost.$id}`);
-                    } else {
-                        console.error("dbPost is invalid:", dbPost);
-                        throw new Error("Post creation returned undefined or invalid response");
-                    }
-                } else {
-                    alert("Failed to upload image. Please try again.");
-                }
             }
-        } catch (error) {
-            console.error("Submit error:", error.message);
-            alert("Error: " + error.message);
         }
     };
 
@@ -137,7 +103,7 @@ export default function PostForm({ post }) {
                 {post && (
                     <div className="w-full mb-4">
                         <img
-                            src={appwriteService.getFilePreview(post.featuredimage)}
+                            src={appwriteService.getFilepreview(post.featuredimage)}
                             alt={post.title}
                             className="rounded-lg"
                         />
