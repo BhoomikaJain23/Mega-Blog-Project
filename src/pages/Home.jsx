@@ -8,7 +8,7 @@ function Home() {
     const userData = useSelector((state) => state.auth.userData); 
 
     useEffect(() => {
-        if (userData) { /
+        if (userData) { 
             appwriteService.getPosts().then((posts) => {
                 if (posts) {
                     setPosts(posts.documents);
