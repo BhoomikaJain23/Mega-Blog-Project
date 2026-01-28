@@ -22,11 +22,18 @@ export default function Post() {
             });
         } else navigate("/");
     }, [slug, navigate]);
+    console.log("POST USER ID:", post?.userId);
+console.log("LOGGED USER ID:", userData?.$id);
 
     const deletePost = () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
         appwriteService.deletePost(post.$id).then((status) => {
             if (status) {
-                appwriteService.deleteFile(post.featuredImage);
+                if (post.featuredimage) {
+                    appwriteService.deleteFile(post.featuredimage);
+                }
                 navigate("/");
             }
         });
@@ -36,11 +43,13 @@ export default function Post() {
         <div className="py-8">
             <Container>
                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
-                        alt={post.title}
-                        className="rounded-xl"
-                    />
+                    {post.featuredimage && (
+                        <img
+                            src={appwriteService.getFilepreview(post.featuredimage)}
+                            alt={post.title}
+                            className="rounded-xl"
+                        />
+                    )}
 
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
@@ -55,12 +64,14 @@ export default function Post() {
                         </div>
                     )}
                 </div>
+
                 <div className="w-full mb-6">
                     <h1 className="text-2xl font-bold">{post.title}</h1>
                 </div>
+
                 <div className="browser-css">
                     {parse(post.content)}
-                    </div>
+                </div>
             </Container>
         </div>
     ) : null;
