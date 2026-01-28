@@ -1,18 +1,24 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import appwriteService from "../appwrite/config";
-import {Container, PostCard} from '../components'
+import { Container, PostCard } from '../components';
 
 function Home() {
-    const [posts, setPosts] = useState([])
+    const [posts, setPosts] = useState([]);
+    const userData = useSelector((state) => state.auth.userData); 
 
     useEffect(() => {
-        appwriteService.getPosts().then((posts) => {
-            if (posts) {
-                setPosts(posts.documents)
-            }
-        })
-    }, [])
-  
+        if (userData) { /
+            appwriteService.getPosts().then((posts) => {
+                if (posts) {
+                    setPosts(posts.documents);
+                }
+            });
+        } else {
+            setPosts([]); 
+        }
+    }, [userData]); 
+
     if (posts.length === 0) {
         return (
             <div className="w-full py-8 mt-4 text-center">
@@ -26,8 +32,9 @@ function Home() {
                     </div>
                 </Container>
             </div>
-        )
+        );
     }
+
     return (
         <div className='w-full py-8'>
             <Container>
@@ -40,7 +47,7 @@ function Home() {
                 </div>
             </Container>
         </div>
-    )
+    );
 }
 
 export default Home;
