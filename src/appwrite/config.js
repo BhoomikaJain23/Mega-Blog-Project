@@ -1,4 +1,5 @@
 import conf from '../conf/conf.js';
+import { Permission,Role } from 'appwrite';
 import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 export class Service{
@@ -26,7 +27,12 @@ export class Service{
                     featuredimage,
                     status,
                     userId,
-                }
+                },
+                [
+                    Permission.read(Role.any()),           
+                Permission.update(Role.user(userId)),   
+                Permission.delete(Role.user(userId)) 
+                ]
             )
         } catch (error) {
             console.log("Appwrite serive :: createPost :: error", error);

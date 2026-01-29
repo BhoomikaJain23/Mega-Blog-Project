@@ -6,78 +6,54 @@ import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 
 export default function Post() {
-    const [post, setPost] = useState(null);
-    const { slug } = useParams();
-    const navigate = useNavigate();
+  const [post, setPost] = useState(null);
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const userData = useSelector((state) => state.auth.userData);
 
-    const userData = useSelector((state) => state.auth.userData);
+  const isAuthor = post && userData?.userData ? post.userId === userData.userData.$id : false;
 
-   const isAuthor =
-    post && userData?.userData
-        ? post.userId === userData.userData.$id
-        : false;
+  useEffect(() => {
+    if (slug) {
+      appwriteService.getPost(slug).then((p) => {
+        if (p) setPost(p);
+        else navigate("/");
+      });
+    } else navigate("/");
+  }, [slug, navigate]);
 
+  const deletePost = () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    appwriteService.deletePost(post.$id).then((status) => {
+      if (status) {
+        if (post.featuredimage) appwriteService.deleteFile(post.featuredimage);
+        navigate("/");
+      }
+    }).catch(() => alert("You are not allowed to delete this post"));
+  };
 
+  return post ? (
+    <div className="py-12">
+      <Container>
+        <div className="w-full mb-6 relative border border-slate-700 rounded-2xl p-4 glass">
+          {post.featuredimage && (
+            <img src={appwriteService.getFilepreview(post.featuredimage)} alt={post.title} className="rounded-xl w-full max-h-96 object-cover" />
+          )}
 
-    useEffect(() => {
-        if (slug) {
-            appwriteService.getPost(slug).then((post) => {
-                if (post) setPost(post);
-                else navigate("/");
-            });
-        } else navigate("/");
-    }, [slug, navigate]);
-    console.log("POST USER ID:", post?.userId);
-console.log("LOGGED USER ID:", userData?.$id);
-
-    const deletePost = () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (!confirmDelete) return;
-
-        appwriteService.deletePost(post.$id).then((status) => {
-            if (status) {
-                if (post.featuredimage) {
-                    appwriteService.deleteFile(post.featuredimage);
-                }
-                navigate("/");
-            }
-        });
-    };
-
-    return post ? (
-        <div className="py-8">
-            <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    {post.featuredimage && (
-                        <img
-                            src={appwriteService.getFilepreview(post.featuredimage)}
-                            alt={post.title}
-                            className="rounded-xl"
-                        />
-                    )}
-
-                    {isAuthor && (
-                        <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
-                                    Edit
-                                </Button>
-                            </Link>
-                            <Button bgColor="bg-red-500" onClick={deletePost}>
-                                Delete
-                            </Button>
-                        </div>
-                    )}
-                </div>
-
-                <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.title}</h1>
-                </div>
-
-                <div className="browser-css">
-                    {parse(post.content)}
-                </div>
-            </Container>
+          {isAuthor && (
+            <div className="absolute right-6 top-6 flex gap-3">
+              <Link to={`/edit-post/${post.$id}`}><Button> Edit </Button></Link>
+              <Button bgColor="bg-red-600" onClick={deletePost}> Delete </Button>
+            </div>
+          )}
         </div>
-    ) : null;
+
+        <h1 className="text-4xl font-extrabold text-slate-100 mb-6">{post.title}</h1>
+
+        <div className="browser-css prose prose-invert">
+          {parse(post.content)}
+        </div>
+      </Container>
+    </div>
+  ) : null;
 }
